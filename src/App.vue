@@ -4,7 +4,14 @@
     <header class="app-header">
       <div class="header-content">
         <h1 class="app-title">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg
+            width="28"
+            height="28"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
             <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
             <circle cx="8.5" cy="8.5" r="1.5" />
             <polyline points="21 15 16 10 5 21" />
@@ -21,10 +28,7 @@
       <!-- 步骤1：图片上传 -->
       <section v-if="!imageInfo" class="section card fade-in">
         <h2 class="section-title">第一步：上传图片</h2>
-        <ImageUploader
-          @image-loaded="handleImageLoaded"
-          @image-cleared="handleImageCleared"
-        />
+        <ImageUploader @image-loaded="handleImageLoaded" @image-cleared="handleImageCleared" />
       </section>
 
       <!-- 步骤2：裁剪操作区 -->
@@ -81,16 +85,21 @@
             </div>
             <div class="result-actions">
               <button class="btn download-btn" @click="handleDownload">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                   <polyline points="7 10 12 15 17 10" />
                   <line x1="12" y1="15" x2="12" y2="3" />
                 </svg>
                 下载图片
               </button>
-              <button class="btn btn-secondary" @click="handleNewCrop">
-                新的裁剪
-              </button>
+              <button class="btn btn-secondary" @click="handleNewCrop">新的裁剪</button>
             </div>
           </div>
         </section>
@@ -114,13 +123,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import type { Ref } from 'vue'
 import ImageUploader from './components/ImageUploader.vue'
 import CropperCanvas from './components/CropperCanvas.vue'
 import ControlPanel from './components/ControlPanel.vue'
 import { useKeyboard } from './composables/useKeyboard'
-import { exportCroppedImage, downloadImage, generateFilename, isCropAreaValid } from './utils/imageExport'
+import {
+  exportCroppedImage,
+  downloadImage,
+  generateFilename,
+  isCropAreaValid,
+} from './utils/imageExport'
 import { AnchorStatus } from './types'
 import type { ImageInfo, CropArea, Point, CropResult } from './types'
 
@@ -143,7 +157,9 @@ const coordinatesHistory = ref<Array<{ first: Point | null; second: Point | null
 // 计算属性
 const cropReady = computed(() => cropArea.value !== null)
 const hasFirstAnchor = computed(() => currentAnchorStatus.value !== AnchorStatus.NONE)
-const hasAnchors = computed(() => cropArea.value !== null || currentAnchorStatus.value === AnchorStatus.FIRST)
+const hasAnchors = computed(
+  () => cropArea.value !== null || currentAnchorStatus.value === AnchorStatus.FIRST,
+)
 const canUndo = computed(() => coordinatesHistory.value.length > 1)
 
 // 键盘快捷键处理
@@ -170,7 +186,8 @@ const handleCoordinatesChange = (coords: { first: Point | null; second: Point | 
       coordinatesHistory.value.push({ ...coords })
     }
   }
-  cropArea.value = coords.first && coords.second ? { topLeft: coords.first, bottomRight: coords.second } : null
+  cropArea.value =
+    coords.first && coords.second ? { topLeft: coords.first, bottomRight: coords.second } : null
 }
 
 const handleCropReady = (area: CropArea) => {
@@ -193,7 +210,7 @@ const handleCrop = async () => {
   try {
     isProcessing.value = true
     clearMessages()
-    const result = await exportCroppedImage(imageInfo.value.src, cropArea.value, imageInfo.value.width, imageInfo.value.height)
+    const result = await exportCroppedImage(imageInfo.value.src, cropArea.value)
     cropResult.value = result
     showMessage('裁剪成功！可以下载图片了', 'success')
   } catch (error) {
@@ -209,7 +226,7 @@ const handleDownload = () => {
     const filename = generateFilename(imageInfo.value.src.split('/').pop() || 'image', 'cropped')
     downloadImage(cropResult.value.dataUrl, filename)
     showMessage('图片下载已开始', 'success')
-  } catch (error) {
+  } catch {
     showMessage('下载失败，请手动保存图片', 'error')
   }
 }
@@ -262,11 +279,11 @@ const resetAll = () => {
 const showMessage = (message: string, type: 'success' | 'error') => {
   clearMessages()
   if (type === 'success') {
-    setTimeout(() => successMessage.value = message, 0)
-    setTimeout(() => successMessage.value = '', 3000)
+    setTimeout(() => (successMessage.value = message), 0)
+    setTimeout(() => (successMessage.value = ''), 3000)
   } else {
-    setTimeout(() => errorMessage.value = message, 0)
-    setTimeout(() => errorMessage.value = '', 5000)
+    setTimeout(() => (errorMessage.value = message), 0)
+    setTimeout(() => (errorMessage.value = ''), 5000)
   }
 }
 
@@ -348,8 +365,13 @@ onMounted(() => {
 }
 
 @keyframes breathe {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
 }
 
 .app-main {
@@ -512,7 +534,9 @@ onMounted(() => {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .fade-in {
@@ -531,19 +555,47 @@ onMounted(() => {
 }
 
 @media (max-width: 768px) {
-  .app-title { font-size: 1.8rem; flex-direction: column; gap: 0.5rem; }
-  .app-subtitle { font-size: 0.9rem; }
-  .app-main { padding: 1rem 0.5rem; gap: 1rem; }
-  .section { padding: 1.5rem 1rem; }
-  .section-title { font-size: 1.1rem; }
-  .result-container { grid-template-columns: 1fr; gap: 1.5rem; }
-  .result-actions { position: static; }
-  .theme-indicator { width: 20px; height: 20px; top: 0.5rem; right: 0.5rem; }
-  .app-header { padding: 1.5rem 0.75rem; }
+  .app-title {
+    font-size: 1.8rem;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .app-subtitle {
+    font-size: 0.9rem;
+  }
+  .app-main {
+    padding: 1rem 0.5rem;
+    gap: 1rem;
+  }
+  .section {
+    padding: 1.5rem 1rem;
+  }
+  .section-title {
+    font-size: 1.1rem;
+  }
+  .result-container {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .result-actions {
+    position: static;
+  }
+  .theme-indicator {
+    width: 20px;
+    height: 20px;
+    top: 0.5rem;
+    right: 0.5rem;
+  }
+  .app-header {
+    padding: 1.5rem 0.75rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 *:focus-visible {

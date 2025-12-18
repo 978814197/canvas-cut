@@ -4,7 +4,6 @@
  */
 
 import type { CropArea, Point, CropResult } from '../types'
-import { useCanvasDPI } from '../composables/useCanvasDPI'
 
 /**
  * 导出裁剪区域为图片
@@ -12,8 +11,6 @@ import { useCanvasDPI } from '../composables/useCanvasDPI'
 export async function exportCroppedImage(
   imageSrc: string,
   cropArea: CropArea,
-  originalWidth: number,
-  originalHeight: number
 ): Promise<CropResult> {
   return new Promise((resolve, reject) => {
     // 创建临时Canvas
@@ -58,10 +55,14 @@ export async function exportCroppedImage(
       // 绘制裁剪区域
       ctx.drawImage(
         img,
-        cropX, cropY,        // 源图像的起始位置
-        cropWidth, cropHeight, // 源图像的裁剪尺寸
-        0, 0,                // 目标Canvas的起始位置
-        cropWidth, cropHeight // 目标Canvas的尺寸
+        cropX,
+        cropY, // 源图像的起始位置
+        cropWidth,
+        cropHeight, // 源图像的裁剪尺寸
+        0,
+        0, // 目标Canvas的起始位置
+        cropWidth,
+        cropHeight, // 目标Canvas的尺寸
       )
 
       // 转换为Blob和DataURL
@@ -81,7 +82,7 @@ export async function exportCroppedImage(
           }
         },
         'image/png',
-        1.0 // 最高质量
+        1.0, // 最高质量
       )
     }
 
@@ -98,7 +99,7 @@ export async function exportCroppedImage(
  */
 export function downloadImage(
   dataUrl: string,
-  filename: string = `cropped-${Date.now()}.png`
+  filename: string = `cropped-${Date.now()}.png`,
 ): void {
   // 创建下载链接
   const link = document.createElement('a')
@@ -134,7 +135,7 @@ export function validateImageSize(
   width: number,
   height: number,
   maxWidth: number = 4096,
-  maxHeight: number = 4096
+  maxHeight: number = 4096,
 ): { valid: boolean; reason?: string } {
   if (width <= 0 || height <= 0) {
     return { valid: false, reason: '图片尺寸无效' }
@@ -143,7 +144,7 @@ export function validateImageSize(
   if (width > maxWidth || height > maxHeight) {
     return {
       valid: false,
-      reason: `图片尺寸过大 (${width}×${height})，最大支持 ${maxWidth}×${maxHeight}`
+      reason: `图片尺寸过大 (${width}×${height})，最大支持 ${maxWidth}×${maxHeight}`,
     }
   }
 
@@ -163,10 +164,7 @@ export function formatFileSize(bytes: number): string {
 /**
  * 计算裁剪区域的像素面积
  */
-export function calculateCropArea(
-  topLeft: Point,
-  bottomRight: Point
-): number {
+export function calculateCropArea(topLeft: Point, bottomRight: Point): number {
   const width = Math.abs(bottomRight.x - topLeft.x)
   const height = Math.abs(bottomRight.y - topLeft.y)
   return width * height
@@ -178,14 +176,9 @@ export function calculateCropArea(
 export async function createThumbnail(
   imageSrc: string,
   cropArea: CropArea,
-  maxWidth: number = 200
+  maxWidth: number = 200,
 ): Promise<string> {
-  const result = await exportCroppedImage(
-    imageSrc,
-    cropArea,
-    0,
-    0
-  )
+  const result = await exportCroppedImage(imageSrc, cropArea)
 
   const img = new Image()
   img.src = result.dataUrl
@@ -208,22 +201,12 @@ export async function createThumbnail(
 /**
  * 批量导出多个裁剪区域
  */
-export async function batchExport(
-  imageSrc: string,
-  areas: CropArea[],
-  originalWidth: number,
-  originalHeight: number
-): Promise<CropResult[]> {
+export async function batchExport(imageSrc: string, areas: CropArea[]): Promise<CropResult[]> {
   const results: CropResult[] = []
 
   for (const area of areas) {
     try {
-      const result = await exportCroppedImage(
-        imageSrc,
-        area,
-        originalWidth,
-        originalHeight
-      )
+      const result = await exportCroppedImage(imageSrc, area)
       results.push(result)
     } catch (error) {
       console.warn('跳过无效的裁剪区域:', area, error)
@@ -239,7 +222,7 @@ export async function batchExport(
 export function isCropAreaValid(
   area: CropArea,
   imageWidth: number,
-  imageHeight: number
+  imageHeight: number,
 ): { valid: boolean; issues: string[] } {
   const issues: string[] = []
   const { topLeft, bottomRight } = area
@@ -279,9 +262,9 @@ export function isCropAreaValid(
 export function generateFilename(
   originalName: string = 'image',
   suffix: string = 'cropped',
-  timestamp: boolean = true
+  timestamp: boolean = true,
 ): string {
-  const baseName = originalName.replace(/\.[^/.]+$/, '') // 移除扩展名
+  const baseName = originalName.replace(/\\.[^/.]+$/, '') // 移除扩展名
   const timePart = timestamp ? `-${Date.now()}` : ''
   return `${baseName}-${suffix}${timePart}.png`
 }
@@ -308,7 +291,7 @@ export function checkCanvasSupport(): {
       if (dataUrl && dataUrl.startsWith(`data:${format}`)) {
         formats.push(format)
       }
-    } catch (e) {
+    } catch {
       // 格式不支持
     }
   }

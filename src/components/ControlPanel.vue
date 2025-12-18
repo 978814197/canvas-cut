@@ -3,13 +3,15 @@
     <!-- 主操作区域 -->
     <div class="control-actions" v-if="hasImage">
       <!-- 裁剪操作 -->
-      <button
-        v-if="cropReady"
-        class="btn crop-btn"
-        @click="handleCrop"
-        :disabled="isProcessing"
-      >
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <button v-if="cropReady" class="btn crop-btn" @click="handleCrop" :disabled="isProcessing">
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+        >
           <path d="M23 4v6h-6M1 20v-6h6M23 14v6h-6M1 10V4h6" />
         </svg>
         <span>{{ isProcessing ? '裁剪中...' : '导出裁剪' }}</span>
@@ -21,7 +23,14 @@
         :disabled="!hasFirstAnchor"
         @click="handleCancelSelect"
       >
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
           <line x1="18" y1="6" x2="6" y2="18" />
           <line x1="6" y1="6" x2="18" y2="18" />
         </svg>
@@ -30,7 +39,14 @@
 
       <!-- 重置和撤销 -->
       <button class="btn btn-secondary" @click="handleReset" :disabled="!hasAnchors">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
           <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 12" />
           <path d="M3 3v9h9" />
         </svg>
@@ -38,7 +54,14 @@
       </button>
 
       <button class="btn btn-secondary" @click="handleUndo" :disabled="!canUndo">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
           <path d="M3 7v6h6M21 17a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74" />
         </svg>
         撤销
@@ -51,7 +74,7 @@
         <input
           type="checkbox"
           :checked="showCoordinates"
-          @change="$emit('update:show-coordinates', $event.target.checked)"
+          @change="$emit('update:show-coordinates', ($event.target as HTMLInputElement).checked)"
         />
         <span class="toggle-slider"></span>
         <span class="toggle-label">显示坐标</span>
@@ -61,7 +84,14 @@
     <!-- 提示信息 -->
     <div class="info-box" v-if="hasImage && !cropReady">
       <div class="info-content">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
           <circle cx="12" cy="12" r="10" />
           <line x1="12" y1="16" x2="12" y2="12" />
           <line x1="12" y1="8" x2="12.01" y2="8" />
@@ -77,7 +107,14 @@
 
     <!-- 成功消息 -->
     <div v-if="successMessage" class="message success fade-in">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+      >
         <polyline points="20 6 9 17 4 12" />
       </svg>
       {{ successMessage }}
@@ -85,7 +122,14 @@
 
     <!-- 错误消息 -->
     <div v-if="errorMessage" class="message error fade-in">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+      >
         <circle cx="12" cy="12" r="10" />
         <line x1="12" y1="8" x2="12" y2="12" />
         <line x1="12" y1="16" x2="12.01" y2="16" />
@@ -462,7 +506,8 @@ const handleCancelSelect = () => {
 }
 
 @keyframes buttonPulse {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: var(--shadow-soft);
   }
   50% {

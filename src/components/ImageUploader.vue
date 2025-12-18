@@ -4,7 +4,7 @@
     <div
       v-if="!imageSrc"
       class="upload-area"
-      :class="{ 'drag-over': isDragOver, 'hover': isHover }"
+      :class="{ 'drag-over': isDragOver, hover: isHover }"
       @click="handleClick"
       @dragenter="handleDragEnter"
       @dragover="handleDragOver"
@@ -15,7 +15,14 @@
     >
       <div class="upload-content">
         <div class="upload-icon">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg
+            width="48"
+            height="48"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
             <polyline points="7 10 12 15 17 10" />
             <line x1="12" y1="15" x2="12" y2="3" />
@@ -40,9 +47,7 @@
     <div v-else class="image-preview-area">
       <div class="preview-header">
         <span class="filename">{{ fileName }}</span>
-        <button class="btn btn-secondary" @click="clearImage" title="更换图片">
-          更换图片
-        </button>
+        <button class="btn btn-secondary" @click="clearImage" title="更换图片">更换图片</button>
       </div>
       <div class="preview-info">
         <span>尺寸: {{ imageWidth }} × {{ imageHeight }} 像素</span>
@@ -53,7 +58,14 @@
     <!-- 错误提示 -->
     <transition name="fade">
       <div v-if="errorMessage" class="error-message">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
           <circle cx="12" cy="12" r="10" />
           <line x1="12" y1="8" x2="12" y2="12" />
           <line x1="12" y1="16" x2="12.01" y2="16" />
@@ -95,8 +107,9 @@ const handleClick = () => {
  */
 const handleFileSelect = (event: Event) => {
   const input = event.target as HTMLInputElement
-  if (input.files && input.files.length > 0) {
-    processFile(input.files[0])
+  const file = input.files?.[0]
+  if (file) {
+    processFile(file)
   }
 }
 
@@ -142,9 +155,8 @@ const handleDrop = (event: DragEvent) => {
   event.preventDefault()
   isDragOver.value = false
 
-  const files = event.dataTransfer?.files
-  if (files && files.length > 0) {
-    const file = files[0]
+  const file = event.dataTransfer?.files?.[0]
+  if (file) {
     if (file.type.startsWith('image/')) {
       processFile(file)
     } else {
@@ -180,7 +192,9 @@ const processFile = (file: File) => {
       // 限制最大尺寸
       const maxDimension = 4096
       if (img.width > maxDimension || img.height > maxDimension) {
-        showErrorMessage(`图片尺寸过大 (${img.width}×${img.height})，请选择小于 ${maxDimension}px 的图片`)
+        showErrorMessage(
+          `图片尺寸过大 (${img.width}×${img.height})，请选择小于 ${maxDimension}px 的图片`,
+        )
         return
       }
 
@@ -396,7 +410,9 @@ defineExpose({
 /* 动画 */
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity var(--transition-medium), transform var(--transition-medium);
+  transition:
+    opacity var(--transition-medium),
+    transform var(--transition-medium);
 }
 
 .fade-enter-from,
@@ -452,7 +468,8 @@ defineExpose({
 }
 
 @keyframes bounce {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {

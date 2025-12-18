@@ -103,7 +103,8 @@ defineProps<{
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
     transform: scale(1);
   }
@@ -124,7 +125,8 @@ defineProps<{
 
 /* 微光动画 */
 @keyframes subtleGlow {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 4px 16px rgba(45, 90, 74, 0.15);
   }
   50% {

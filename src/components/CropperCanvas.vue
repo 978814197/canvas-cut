@@ -2,7 +2,13 @@
   <div class="cropper-canvas" v-if="imageSrc">
     <!-- Canvas 容器 -->
     <div class="canvas-container" ref="containerRef">
-      <canvas ref="canvasRef" @mousedown="handleMouseDown" @mousemove="handleMouseMove" @mouseup="handleMouseUp" @mouseleave="handleMouseLeave"></canvas>
+      <canvas
+        ref="canvasRef"
+        @mousedown="handleMouseDown"
+        @mousemove="handleMouseMove"
+        @mouseup="handleMouseUp"
+        @mouseleave="handleMouseLeave"
+      ></canvas>
 
       <!-- 坐标显示 -->
       <CoordinateDisplay
@@ -35,8 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
-import type { Ref } from 'vue'
+import { ref, computed, watch } from 'vue'
 import CoordinateDisplay from './CoordinateDisplay.vue'
 import { useCanvasDPI } from '../composables/useCanvasDPI'
 import { AnchorStatus } from '../types'
@@ -94,6 +99,7 @@ const {
   getMousePosition,
   canvasToImageCoords,
   imageToCanvasCoords,
+  resolveColor,
 } = useCanvasDPI(canvasRef, 800, 600) // 初始尺寸，会被动态调整
 
 // 计算属性
@@ -143,11 +149,15 @@ const offset = computed(() => {
 })
 
 // 监听属性变化
-watch(() => props.imageSrc, async (newSrc) => {
-  if (newSrc) {
-    await loadImage(newSrc)
-  }
-}, { immediate: true })
+watch(
+  () => props.imageSrc,
+  async (newSrc) => {
+    if (newSrc) {
+      await loadImage(newSrc)
+    }
+  },
+  { immediate: true },
+)
 
 watch(canvasSize, async (newSize) => {
   if (canvasRef.value && adapter.value) {
@@ -171,19 +181,23 @@ watch(canvasSize, async (newSize) => {
   }
 })
 
-watch([firstAnchor, secondAnchor], () => {
-  emit('coordinates-change', {
-    first: firstAnchor.value,
-    second: secondAnchor.value,
-  })
-
-  if (cropReady.value && firstAnchor.value && secondAnchor.value) {
-    emit('crop-ready', {
-      topLeft: firstAnchor.value,
-      bottomRight: secondAnchor.value,
+watch(
+  [firstAnchor, secondAnchor],
+  () => {
+    emit('coordinates-change', {
+      first: firstAnchor.value,
+      second: secondAnchor.value,
     })
-  }
-}, { deep: true })
+
+    if (cropReady.value && firstAnchor.value && secondAnchor.value) {
+      emit('crop-ready', {
+        topLeft: firstAnchor.value,
+        bottomRight: secondAnchor.value,
+      })
+    }
+  },
+  { deep: true },
+)
 
 watch(anchorStatus, (newStatus) => {
   emit('update:anchor-status', newStatus)
@@ -266,7 +280,7 @@ function drawAll(): void {
       drawScale.value,
       drawScale.value,
       offset.value.x,
-      offset.value.y
+      offset.value.y,
     )
 
     if (converted.x > 0 && converted.y > 0) {
@@ -291,7 +305,7 @@ function drawAll(): void {
         drawScale.value,
         drawScale.value,
         offset.value.x,
-        offset.value.y
+        offset.value.y,
       )
       drawAnchor(ctx, canvasPos.x, canvasPos.y, 'var(--color-primary)', 10, false)
     }
@@ -333,7 +347,8 @@ function drawCropOverlay(ctx: CanvasRenderingContext2D): void {
 
   // 绘制半透明覆盖层
   const overlayColor = getComputedStyle(document.documentElement)
-    .getPropertyValue('--overlay-light').trim()
+    .getPropertyValue('--overlay-light')
+    .trim()
   drawOverlay(ctx, minX, minY, width, height, overlayColor)
 
   // 绘制虚线边框
@@ -349,10 +364,8 @@ function drawCropOverlay(ctx: CanvasRenderingContext2D): void {
   ]
 
   if (adapter.value) {
-    const colorDark = adapter.value.ctx.fillStyle = getComputedStyle(document.documentElement)
-      .getPropertyValue('--color-dark').trim()
     ctx.save()
-    ctx.fillStyle = colorDark
+    ctx.fillStyle = resolveColor('var(--color-dark)')
     corners.forEach((corner) => {
       ctx.fillRect(corner.x - cornerSize / 2, corner.y - cornerSize / 2, cornerSize, cornerSize)
     })
@@ -377,7 +390,7 @@ function handleMouseDown(event: MouseEvent): void {
     drawScale.value,
     drawScale.value,
     offset.value.x,
-    offset.value.y
+    offset.value.y,
   )
 
   // 检查是否点击了已存在的锚点（用于拖拽调整）
@@ -385,8 +398,10 @@ function handleMouseDown(event: MouseEvent): void {
 
   if (firstAnchor.value && secondAnchor.value) {
     // 检查是否点击到第一个锚点附近
-    if (Math.abs(converted.x - firstAnchor.value.x) < hitTestThreshold &&
-        Math.abs(converted.y - firstAnchor.value.y) < hitTestThreshold) {
+    if (
+      Math.abs(converted.x - firstAnchor.value.x) < hitTestThreshold &&
+      Math.abs(converted.y - firstAnchor.value.y) < hitTestThreshold
+    ) {
       mouseState.value.isMouseDown = true
       mouseState.value.mode = 'dragging'
       mouseState.value.draggingAnchor = 'first'
@@ -395,8 +410,10 @@ function handleMouseDown(event: MouseEvent): void {
     }
 
     // 检查是否点击到第二个锚点附近
-    if (Math.abs(converted.x - secondAnchor.value.x) < hitTestThreshold &&
-        Math.abs(converted.y - secondAnchor.value.y) < hitTestThreshold) {
+    if (
+      Math.abs(converted.x - secondAnchor.value.x) < hitTestThreshold &&
+      Math.abs(converted.y - secondAnchor.value.y) < hitTestThreshold
+    ) {
       mouseState.value.isMouseDown = true
       mouseState.value.mode = 'dragging'
       mouseState.value.draggingAnchor = 'second'
@@ -434,7 +451,7 @@ function handleMouseMove(event: MouseEvent): void {
     drawScale.value,
     drawScale.value,
     offset.value.x,
-    offset.value.y
+    offset.value.y,
   )
 
   // 更新鼠标位置（用于坐标显示和虚线预览）
@@ -443,15 +460,16 @@ function handleMouseMove(event: MouseEvent): void {
   // 处理拖拽调整
   if (mouseState.value.isMouseDown && mouseState.value.mode === 'dragging') {
     const anchor = mouseState.value.draggingAnchor
+    if (!imageInfo.value) return
     if (anchor === 'first' && firstAnchor.value) {
       firstAnchor.value = {
-        x: Math.max(0, Math.min(imageInfo.value!.width, Math.round(converted.x))),
-        y: Math.max(0, Math.min(imageInfo.value!.height, Math.round(converted.y))),
+        x: Math.max(0, Math.min(imageInfo.value.width, Math.round(converted.x))),
+        y: Math.max(0, Math.min(imageInfo.value.height, Math.round(converted.y))),
       }
     } else if (anchor === 'second' && secondAnchor.value) {
       secondAnchor.value = {
-        x: Math.max(0, Math.min(imageInfo.value!.width, Math.round(converted.x))),
-        y: Math.max(0, Math.min(imageInfo.value!.height, Math.round(converted.y))),
+        x: Math.max(0, Math.min(imageInfo.value.width, Math.round(converted.x))),
+        y: Math.max(0, Math.min(imageInfo.value.height, Math.round(converted.y))),
       }
     }
 
@@ -473,7 +491,7 @@ function handleMouseMove(event: MouseEvent): void {
 /**
  * 处理鼠标释放
  */
-function handleMouseUp(event: MouseEvent): void {
+function handleMouseUp(): void {
   // 检查是否设置了第二个点，如果是则完成裁剪区域设置
   if (secondAnchor.value) {
     // 确保左上角小于右下角
@@ -496,7 +514,7 @@ function handleMouseUp(event: MouseEvent): void {
  */
 function handleMouseLeave(): void {
   if (mouseState.value.isMouseDown) {
-    handleMouseUp({} as MouseEvent)
+    handleMouseUp()
   }
   mousePosition.value = null
 }
@@ -531,18 +549,6 @@ function getCropData(): { area: CropArea; scale: number; offset: Point } | null 
     },
     scale: drawScale.value,
     offset: { ...offset.value },
-  }
-}
-
-/**
- * 拖拽调整锚点时的边界检查
- */
-function constrainAnchorPosition(pos: Point): Point {
-  if (!imageInfo.value) return pos
-
-  return {
-    x: Math.max(0, Math.min(imageInfo.value.width, pos.x)),
-    y: Math.max(0, Math.min(imageInfo.value.height, pos.y)),
   }
 }
 
@@ -710,7 +716,8 @@ canvas:active {
 
 /* 动画 */
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {

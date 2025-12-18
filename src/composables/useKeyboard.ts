@@ -4,7 +4,6 @@
  */
 
 import { onMounted, onUnmounted, ref } from 'vue'
-import type { Ref } from 'vue'
 import type { KeyboardShortcuts } from '../types'
 
 /**
@@ -33,22 +32,19 @@ export interface KeyboardHandler {
  */
 export function useKeyboard(
   handler: KeyboardHandler,
-  shortcuts: KeyboardShortcuts = DEFAULT_SHORTCUTS
+  shortcuts: KeyboardShortcuts = DEFAULT_SHORTCUTS,
 ) {
   const pressedKeys = ref<Set<string>>(new Set())
 
   /**
    * 检查按键组合是否匹配
    */
-  const isKeyComboMatch = (
-    event: KeyboardEvent,
-    combo: string
-  ): boolean => {
+  const isKeyComboMatch = (event: KeyboardEvent, combo: string): boolean => {
     // 处理组合键：Control+Z, Meta+Z 等
     if (combo.includes('+')) {
       const parts = combo.split('+')
       const modifier = parts[0] // Control 或 Meta
-      const key = parts[1]
+      const key = parts[1] || ''
 
       const modifiers = {
         Control: event.ctrlKey || event.metaKey, // 支持Windows和Mac
@@ -63,11 +59,15 @@ export function useKeyboard(
       }
 
       // 检查主键
-      return event.code === key || event.key.toLowerCase() === key.toLowerCase()
+      return event.code === key || event.key?.toLowerCase() === key.toLowerCase()
     }
 
     // 单按键
-    return event.code === combo || event.key === combo || event.key.toLowerCase() === combo
+    return (
+      event.code === combo ||
+      event.key === combo ||
+      event.key?.toLowerCase() === combo.toLowerCase()
+    )
   }
 
   /**
@@ -75,9 +75,7 @@ export function useKeyboard(
    */
   const handleKeyDown = (event: KeyboardEvent) => {
     // 记录按下的键
-    const keyId = event.ctrlKey || event.metaKey
-      ? `Control+${event.code}`
-      : event.code
+    const keyId = event.ctrlKey || event.metaKey ? `Control+${event.code}` : event.code
 
     pressedKeys.value.add(keyId)
 
@@ -87,28 +85,28 @@ export function useKeyboard(
     }
 
     // 检查取消快捷键
-    if (shortcuts.cancel.some(combo => isKeyComboMatch(event, combo))) {
+    if (shortcuts.cancel.some((combo) => isKeyComboMatch(event, combo))) {
       event.preventDefault()
       handler.onCancel()
       return
     }
 
     // 检查确认快捷键
-    if (shortcuts.confirm.some(combo => isKeyComboMatch(event, combo))) {
+    if (shortcuts.confirm.some((combo) => isKeyComboMatch(event, combo))) {
       event.preventDefault()
       handler.onConfirm()
       return
     }
 
     // 检查重置快捷键
-    if (shortcuts.reset.some(combo => isKeyComboMatch(event, combo))) {
+    if (shortcuts.reset.some((combo) => isKeyComboMatch(event, combo))) {
       event.preventDefault()
       handler.onReset()
       return
     }
 
     // 检查撤销快捷键
-    if (shortcuts.undo.some(combo => isKeyComboMatch(event, combo))) {
+    if (shortcuts.undo.some((combo) => isKeyComboMatch(event, combo))) {
       event.preventDefault()
       handler.onUndo()
       return
@@ -119,9 +117,7 @@ export function useKeyboard(
    * 处理按键释放
    */
   const handleKeyUp = (event: KeyboardEvent) => {
-    const keyId = event.ctrlKey || event.metaKey
-      ? `Control+${event.code}`
-      : event.code
+    const keyId = event.ctrlKey || event.metaKey ? `Control+${event.code}` : event.code
     pressedKeys.value.delete(keyId)
   }
 
@@ -136,10 +132,12 @@ export function useKeyboard(
    * 检查是否按住了Ctrl/Meta键
    */
   const isModifierPressed = (): boolean => {
-    return isKeyPressed('ControlLeft') ||
-           isKeyPressed('ControlRight') ||
-           isKeyPressed('MetaLeft') ||
-           isKeyPressed('MetaRight')
+    return (
+      isKeyPressed('ControlLeft') ||
+      isKeyPressed('ControlRight') ||
+      isKeyPressed('MetaLeft') ||
+      isKeyPressed('MetaRight')
+    )
   }
 
   /**
@@ -149,7 +147,7 @@ export function useKeyboard(
     if (combo.includes('+')) {
       const parts = combo.split('+')
       const modifier = parts[0] === 'Control' ? 'Ctrl' : parts[0]
-      const key = parts[1]
+      const key = parts[1] || ''
       return `${modifier} + ${key.replace('Key', '')}`
     }
 
@@ -212,18 +210,20 @@ export function useKeyboard(
  */
 export function createShortcutTooltip(
   action: 'cancel' | 'confirm' | 'reset' | 'undo',
-  shortcuts: KeyboardShortcuts = DEFAULT_SHORTCUTS
+  shortcuts: KeyboardShortcuts = DEFAULT_SHORTCUTS,
 ): string {
   const keys = shortcuts[action]
-  const displayKeys = keys.map(key => {
-    if (key.includes('+')) {
-      const parts = key.split('+')
-      const modifier = parts[0] === 'Control' ? 'Ctrl' : parts[0]
-      const k = parts[1].replace('Key', '')
-      return `${modifier}+${k}`
-    }
-    return key === 'Escape' ? 'ESC' : key
-  }).join(' 或 ')
+  const displayKeys = keys
+    .map((key) => {
+      if (key.includes('+')) {
+        const parts = key.split('+')
+        const modifier = parts[0] === 'Control' ? 'Ctrl' : parts[0]
+        const k = (parts[1] || '').replace('Key', '')
+        return `${modifier}+${k}`
+      }
+      return key === 'Escape' ? 'ESC' : key
+    })
+    .join(' 或 ')
 
   const actionNames = {
     cancel: '取消',
