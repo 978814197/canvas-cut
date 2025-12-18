@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cat:*)",
+      "Bash(npm run:*)",
+      "Bash(copy \"C:\\\\apps\\\\projects\\\\front\\\\canvas-cut\\\\src\\\\components\\\\CropperCanvas.vue.backup\" \"C:\\\\apps\\\\projects\\\\front\\\\canvas-cut\\\\src\\\\components\\\\CropperCanvas.vue\")",
+      "Bash(git add:*)"
+    ]
+  }
+}
