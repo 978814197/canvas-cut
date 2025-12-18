@@ -4,7 +4,20 @@
       "Bash(cat:*)",
       "Bash(npm run:*)",
       "Bash(copy \"C:\\\\apps\\\\projects\\\\front\\\\canvas-cut\\\\src\\\\components\\\\CropperCanvas.vue.backup\" \"C:\\\\apps\\\\projects\\\\front\\\\canvas-cut\\\\src\\\\components\\\\CropperCanvas.vue\")",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(Get-Content:*)",
+      "Bash(Select-Object:*)",
+      "Bash(npx vue-tsc:*)",
+      "Bash(npx eslint:*)",
+      "Bash(powershell -Command:*)",
+      "Bash(dir:*)",
+      "Bash(del \"C:\\\\apps\\\\projects\\\\front\\\\canvas-cut\\\\src\\\\components\\\\__tests__\\\\HelloWorld.spec.ts\":*)",
+      "Bash(echo:*)",
+      "Bash(npx vite build:*)",
+      "Bash(git checkout:*)",
+      "Bash(python3:*)",
+      "Bash(node:*)"
     ]
   }
 }

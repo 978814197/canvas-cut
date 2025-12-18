@@ -25,7 +25,7 @@ export interface DPIAdapter {
 export function useCanvasDPI(
   canvasRef: Ref<HTMLCanvasElement | null>,
   width: number,
-  height: number
+  height: number,
 ) {
   const dpr = ref(window.devicePixelRatio || 1)
   const adapter = ref<DPIAdapter | null>(null)
@@ -111,7 +111,10 @@ export function useCanvasDPI(
 
     // 处理3位hex（#abc -> #aabbcc）
     if (hex.length === 3) {
-      hex = hex.split('').map(c => c + c).join('')
+      hex = hex
+        .split('')
+        .map((c) => c + c)
+        .join('')
     }
 
     const r = parseInt(hex.slice(0, 2), 16)
@@ -131,7 +134,7 @@ export function useCanvasDPI(
     scaleX: number,
     scaleY: number,
     offsetX: number,
-    offsetY: number
+    offsetY: number,
   ): { x: number; y: number } => {
     // 反向应用变换：先减偏移，再除比例
     return {
@@ -149,7 +152,7 @@ export function useCanvasDPI(
     scaleX: number,
     scaleY: number,
     offsetX: number,
-    offsetY: number
+    offsetY: number,
   ): { x: number; y: number } => {
     return {
       x: imageX * scaleX + offsetX,
@@ -162,7 +165,7 @@ export function useCanvasDPI(
    */
   const getMousePosition = (
     event: MouseEvent,
-    canvas: HTMLCanvasElement
+    canvas: HTMLCanvasElement,
   ): { x: number; y: number } => {
     const rect = canvas.getBoundingClientRect()
 
@@ -182,7 +185,7 @@ export function useCanvasDPI(
     y1: number,
     x2: number,
     y2: number,
-    lineWidth: number = 1
+    lineWidth: number = 1,
   ) => {
     ctx.beginPath()
     ctx.moveTo(x1 + 0.5, y1 + 0.5) // 避免抗锯齿导致的模糊
@@ -202,7 +205,7 @@ export function useCanvasDPI(
     height: number,
     color: string,
     lineWidth: number = 2,
-    dashArray: number[] = [5, 5]
+    dashArray: number[] = [5, 5],
   ) => {
     ctx.save()
     ctx.strokeStyle = resolveColor(color)
@@ -221,7 +224,7 @@ export function useCanvasDPI(
     y: number,
     width: number,
     height: number,
-    color: string
+    color: string,
   ) => {
     ctx.save()
     ctx.fillStyle = resolveColor(color)
@@ -243,7 +246,7 @@ export function useCanvasDPI(
     y: number,
     color: string,
     size: number = 12,
-    glow: boolean = true
+    glow: boolean = true,
   ) => {
     ctx.save()
 

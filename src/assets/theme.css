@@ -2,23 +2,23 @@
 
 :root {
   /* 核心配色 - 清新薄荷绿系 */
-  --bg-primary: #F0F9F4;        /* 极淡的薄荷绿 - 主要背景 */
-  --bg-secondary: #E6F6ED;      /* 稍深的薄荷绿 - 次要背景 */
+  --bg-primary: #f0f9f4; /* 极淡的薄荷绿 - 主要背景 */
+  --bg-secondary: #e6f6ed; /* 稍深的薄荷绿 - 次要背景 */
 
-  --color-primary: #A8E6CF;      /* 柔和薄荷绿 - 主色调 */
-  --color-primary-light: #C7F9CC; /* 明亮的薄荷绿 - 强调色 */
-  --color-primary-dark: #8ED9B8;  /* 深化薄荷绿 - 悬停状态 */
+  --color-primary: #a8e6cf; /* 柔和薄荷绿 - 主色调 */
+  --color-primary-light: #c7f9cc; /* 明亮的薄荷绿 - 强调色 */
+  --color-primary-dark: #8ed9b8; /* 深化薄荷绿 - 悬停状态 */
 
-  --color-dark: #2D5A4A;         /* 深苔藓绿 - 锚点、重要元素 */
-  --color-text: #3A5A40;         /* 深绿色文字 - 主要文字 */
-  --color-text-light: #5A7A65;   /* 浅绿色文字 - 次要文字 */
+  --color-dark: #2d5a4a; /* 深苔藓绿 - 锚点、重要元素 */
+  --color-text: #3a5a40; /* 深绿色文字 - 主要文字 */
+  --color-text-light: #5a7a65; /* 浅绿色文字 - 次要文字 */
 
   /* 半透明效果 */
-  --overlay-light: rgba(168, 230, 207, 0.3);   /* 裁剪区域遮罩 */
-  --overlay-medium: rgba(168, 230, 207, 0.5);  /* 中等透明度 */
-  --glass-bg: rgba(240, 249, 244, 0.7);        /* 毛玻璃背景 */
-  --glass-border: rgba(168, 230, 207, 0.4);    /* 毛玻璃边框 */
-  --glass-shadow: rgba(45, 90, 74, 0.08);      /* 毛玻璃阴影 */
+  --overlay-light: rgba(168, 230, 207, 0.3); /* 裁剪区域遮罩 */
+  --overlay-medium: rgba(168, 230, 207, 0.5); /* 中等透明度 */
+  --glass-bg: rgba(240, 249, 244, 0.7); /* 毛玻璃背景 */
+  --glass-border: rgba(168, 230, 207, 0.4); /* 毛玻璃边框 */
+  --glass-shadow: rgba(45, 90, 74, 0.08); /* 毛玻璃阴影 */
 
   /* 阴影 */
   --shadow-soft: 0 8px 32px rgba(45, 90, 74, 0.1);
@@ -220,7 +220,8 @@ body {
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
   }
   50% {
@@ -229,11 +230,14 @@ body {
 }
 
 @keyframes glow {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 0 5px var(--color-primary);
   }
   50% {
-    box-shadow: 0 0 15px var(--color-primary), 0 0 25px var(--color-primary);
+    box-shadow:
+      0 0 15px var(--color-primary),
+      0 0 25px var(--color-primary);
   }
 }
 
@@ -292,15 +296,31 @@ body {
 }
 
 /* 间距工具类 */
-.mb-1 { margin-bottom: 0.5rem; }
-.mb-2 { margin-bottom: 1rem; }
-.mb-3 { margin-bottom: 1.5rem; }
-.mb-4 { margin-bottom: 2rem; }
+.mb-1 {
+  margin-bottom: 0.5rem;
+}
+.mb-2 {
+  margin-bottom: 1rem;
+}
+.mb-3 {
+  margin-bottom: 1.5rem;
+}
+.mb-4 {
+  margin-bottom: 2rem;
+}
 
-.mt-1 { margin-top: 0.5rem; }
-.mt-2 { margin-top: 1rem; }
-.mt-3 { margin-top: 1.5rem; }
-.mt-4 { margin-top: 2rem; }
+.mt-1 {
+  margin-top: 0.5rem;
+}
+.mt-2 {
+  margin-top: 1rem;
+}
+.mt-3 {
+  margin-top: 1.5rem;
+}
+.mt-4 {
+  margin-top: 2rem;
+}
 
 /* 布局工具类 */
 .flex-center {
