@@ -1,3 +1,6 @@
+# Windows system files
+nul
+
 # Logs
 logs
 *.log
